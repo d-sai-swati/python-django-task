@@ -9,6 +9,8 @@ from .models import *
 import datetime
 from django.contrib.auth.models import User
 
+
+
 # Create your views here.
 
 
@@ -25,11 +27,13 @@ class ClientsCRUD(APIView):
         except Exception as e:
             return Response({"msg": "Check The Json Object Keys While Sending the Data..Error is"+str(e)})
         else:
-            user = request.user
+            user = request.user.id
+            if user is None:
+                user = client_name = data["created_by"]
+            print('user ',user)
             date = datetime.datetime.now()
             try:
-                Client.objects.create(
-                    client_name=client_name, created_at=date, updated_at=date, created_by=user)
+                Client.objects.create(client_name=client_name, created_by=user)
                 msg = "Created"
             except Exception as e:
                 return Response({"msg": "Error while creating the Data..Error is"+str(e)})
